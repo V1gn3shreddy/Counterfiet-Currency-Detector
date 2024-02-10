@@ -1,0 +1,81 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+#define S1 5
+#define S2 6
+#define S3 7
+#define sensorOut 8
+
+// Magnetic Sensor Pins #define Led A3
+#define Reed 13
+
+// Ultrasonic Sensor Pins const int trigPin = 9; const int echoPin = 10;
+
+// LCD Display Pins
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Change the address if necessary
+
+// Global variables int redFrequency = 0;
+int greenFrequency = 0;
+int blueFrequency = 0;
+int distanceCm = 0;
+int distanceInch = 0;
+
+void setup() {
+// Color Sensor Setup pinMode(S0, OUTPUT);
+pinMode(S1, OUTPUT); 
+pinMode(S2, OUTPUT); 
+pinMode(S3, OUTPUT);
+pinMode(sensorOut, INPUT);
+digitalWrite(S0, HIGH);
+digitalWrite(S1, LOW);
+
+// Magnetic Sensor Setup pinMode(Led, OUTPUT);
+pinMode(Reed, INPUT); 
+Serial.begin(9600);
+
+// Ultrasonic Sensor Setup
+ 
+pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);
+
+// LCD Display Setup lcd.begin(16, 2);
+}
+ 
+delay(1000);	}
+ 
+
+void loop() {
+// Color Sensor Reading digitalWrite(S2, LOW);
+digitalWrite(S3, LOW);
+redFrequency = pulseIn(sensorOut, LOW);
+
+digitalWrite(S2, HIGH); digitalWrite(S3, HIGH);
+greenFrequency = pulseIn(sensorOut, LOW);
+
+digitalWrite(S2, LOW); digitalWrite(S3, HIGH);
+blueFrequency = pulseIn(sensorOut, LOW);
+
+// Magnetic Sensor Reading
+int magnetValue = digitalRead(Reed);
+
+// Ultrasonic Sensor Reading digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+long duration = pulseIn(echoPin, HIGH);
+distanceCm = duration * 0.034 / 2;
+distanceInch = duration * 0.0133 / 2;
+
+// Displaying Results lcd.setCursor(0, 0);
+lcd.print("Color: R");
+lcd.print(redFrequency); 
+Serial.print(redFrequency);
+Serial.print("\n ");
+lcd.print(" G");
+lcd.print(greenFrequency);
+lcd.setCursor(0, 1);
+lcd.print("B");
+lcd.print(blueFrequency);
+lcd.print(" Magnet: "); 
+lcd.print(magnetValue);
